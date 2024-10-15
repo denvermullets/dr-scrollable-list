@@ -1,8 +1,20 @@
 require 'app/scrollable_list'
 
 def tick(args)
-  args.state.list ||= ScrollableList.new(args, base_array)
+  args.state.list ||= ScrollableList.new(args, base_array, options)
   args.state.list.tick
+end
+
+def options
+  {
+    width: 340,
+    height: 340,
+    x: 100,
+    y: 200,
+    line_height: 30,
+    top_padding: 20,
+    buffer_zone: 30
+  }
 end
 
 def base_array

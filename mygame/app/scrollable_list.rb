@@ -1,14 +1,14 @@
 class ScrollableList
-  def initialize(args, names, options = {})
+  def initialize(args, names, options)
     @args = args
     @names = names
-    @scroll_area_width = options[:width] || 340
-    @scroll_area_height = options[:height] || 340
-    @line_height = options[:line_height] || 30
-    @top_padding = options[:top_padding] || 20
-    @buffer_zone = options[:buffer_zone] || 30
-    @scroll_area_x = (1280 - @scroll_area_width) / 2
-    @scroll_area_y = (720 - @scroll_area_height) / 2
+    @scroll_area_width = options[:width]
+    @scroll_area_height = options[:height]
+    @line_height = options[:line_height]
+    @top_padding = options[:top_padding]
+    @buffer_zone = options[:buffer_zone]
+    @scroll_area_x = options[:x]
+    @scroll_area_y = options[:y]
     @scroll_position = 0
     @target_scroll_position = 0
   end
@@ -84,9 +84,13 @@ class ScrollableList
   def render_scrollbar
     return unless max_scroll.positive?
 
-    scrollbar_height = (@scroll_area_height * (@scroll_area_height / (@names.length * @line_height.to_f))).clamp(30, @scroll_area_height)
-    scrollbar_position = @scroll_area_y + (@scroll_area_height - scrollbar_height) - (@scroll_position / max_scroll) * (@scroll_area_height - scrollbar_height)
-    @args.outputs.solids << [@scroll_area_x + @scroll_area_width - 10, scrollbar_position, 10, scrollbar_height, 200, 200, 200]
+    labels_height = @scroll_area_height / (@names.length * @line_height.to_f)
+    scrollbar_height = (@scroll_area_height * labels_height).clamp(30, @scroll_area_height)
+    height = @scroll_area_height - scrollbar_height
+    scrollbar_position = (@scroll_area_y + height) - ((@scroll_position / max_scroll) * height)
+    label_stack_x = @scroll_area_x + @scroll_area_width - 10
+
+    @args.outputs.solids << [label_stack_x, scrollbar_position, 10, scrollbar_height, 200, 200, 200]
   end
 
   def mouse_over_scroll_area?
